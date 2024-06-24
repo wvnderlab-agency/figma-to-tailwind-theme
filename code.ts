@@ -15,30 +15,24 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
 
         if (!variable || variable.resolvedType !== "COLOR") return;
 
-        if (collection.modes.length > 1) {
-          collection.modes.forEach((mode) => {
-            console.log(
-              toCamelCase(variable.name),
-              toCamelCase(mode.name),
-              toCamelCase(rgbToString(variable.valuesByMode[mode.modeId] as RGB | RGBA)
-            ));
-          });
+        collection.modes.forEach((mode) => {
           console.log(
             toCamelCase(variable.name),
-            "DEFAULT",
-            toCamelCase(rgbToString(
-              variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
-            ))
-          );
-        } else {
-          const { modeId } = collection.modes[0];
-          console.log(
-            toCamelCase(variable.name),
+            toCamelCase(mode.name),
             toCamelCase(
-              rgbToString(variable.valuesByMode[modeId] as RGB | RGBA)
+              rgbToString(variable.valuesByMode[mode.modeId] as RGB | RGBA)
             )
           );
-        }
+        });
+        console.log(
+          toCamelCase(variable.name),
+          "DEFAULT",
+          toCamelCase(
+            rgbToString(
+              variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
+            )
+          )
+        );
       });
     });
 
