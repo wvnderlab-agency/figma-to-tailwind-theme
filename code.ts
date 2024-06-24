@@ -16,25 +16,27 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
         if (!variable || variable.resolvedType !== "COLOR") return;
 
         if (collection.modes.length > 1) {
-          collection.modes.forEach(({ name, modeId }) => {
+          collection.modes.forEach((mode) => {
             console.log(
-              variable.name,
-              name,
-              rgbToString(variable.valuesByMode[modeId] as RGB | RGBA)
-            );
+              toCamelCase(variable.name),
+              toCamelCase(mode.name),
+              toCamelCase(rgbToString(variable.valuesByMode[mode.modeId] as RGB | RGBA)
+            ));
           });
           console.log(
-            variable.name,
+            toCamelCase(variable.name),
             "DEFAULT",
-            rgbToString(
+            toCamelCase(rgbToString(
               variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
-            )
+            ))
           );
         } else {
           const { modeId } = collection.modes[0];
           console.log(
-            variable.name,
-            rgbToString(variable.valuesByMode[modeId] as RGB | RGBA)
+            toCamelCase(variable.name),
+            toCamelCase(
+              rgbToString(variable.valuesByMode[modeId] as RGB | RGBA)
+            )
           );
         }
       });
@@ -53,6 +55,12 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
       const alpha = color.hasOwnProperty("a") ? (color as RGBA).a : 1;
 
       return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+    }
+
+    function toCamelCase(str: string) {
+      return str.toLowerCase().replace(/[\s_-](.)/g, (_, group1) => {
+        return group1.toUpperCase();
+      });
     }
 
     return [
