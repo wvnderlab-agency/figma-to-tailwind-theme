@@ -4,37 +4,49 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
 
     if (!selection) return [];
 
-    // Extract name,value for each variable
-    const colors = [];
     const collections =
       await figma.variables.getLocalVariableCollectionsAsync();
+    const colors = await getColors();
+    console.log(colors);
 
-    collections.forEach((collection) => {
-      collection.variableIds.forEach(async (varId) => {
-        let variable = await figma.variables.getVariableByIdAsync(varId);
+    interface ColorMode {
+      [key: string]: string;
+    }
+    
+    interface Colors { 
+      [key: string]: ColorMode;
+    }
 
-        if (!variable || variable.resolvedType !== "COLOR") return;
+    
+    async function getColors(): Promise<Colors> {
+      let colors: Colors = {};
 
-        collection.modes.forEach((mode) => {
-          console.log(
-            toCamelCase(variable.name),
-            toCamelCase(mode.name),
-            toCamelCase(
-              rgbToString(variable.valuesByMode[mode.modeId] as RGB | RGBA)
-            )
+      for (const collection of collections) {
+        for (const varId of collection.variableIds) {
+          let variable = await figma.variables.getVariableByIdAsync(varId);
+          let colorName = toCamelCase(variable?.name || "unknown");
+          colors[colorName] = {}; 
+
+          if (!variable || variable.resolvedType !== "COLOR") continue;
+
+          for (const mode of collection.modes) {
+            let colorValue = rgbToString(
+              variable.valuesByMode[mode.modeId] as RGB | RGBA
+            );
+            let colorMode = toCamelCase(mode.name)
+            colors[colorName] = {...colors[colorName], [colorMode]: colorValue}  
+          }
+
+
+          let colorValue = rgbToString(
+            variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
           );
-        });
-        console.log(
-          toCamelCase(variable.name),
-          "DEFAULT",
-          toCamelCase(
-            rgbToString(
-              variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
-            )
-          )
-        );
-      });
-    });
+            colors[colorName] = {...colors[colorName], "DEFAULT": colorValue}  
+        }
+      }
+
+      return colors;
+    }
 
     function rgbToString(color: RGB | RGBA) {
       const red = Math.round(color.r * 255)
