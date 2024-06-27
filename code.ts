@@ -6,18 +6,24 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
 
     const collections =
       await figma.variables.getLocalVariableCollectionsAsync();
-    const colors = await getColors();
-    console.log(colors);
+    const colorsConfig = {
+      theme: {
+        extend: {
+          colors: await getColors(),
+        },
+      },
+    };
+    const colorsConfigStr = JSON.stringify(colorsConfig, null, 2);
+    const tailwindConfigStr = `export default ${colorsConfigStr}`
 
     interface ColorMode {
       [key: string]: string;
     }
-    
-    interface Colors { 
+
+    interface Colors {
       [key: string]: ColorMode;
     }
 
-    
     async function getColors(): Promise<Colors> {
       let colors: Colors = {};
 
@@ -25,7 +31,7 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
         for (const varId of collection.variableIds) {
           let variable = await figma.variables.getVariableByIdAsync(varId);
           let colorName = toCamelCase(variable?.name || "unknown");
-          colors[colorName] = {}; 
+          colors[colorName] = {};
 
           if (!variable || variable.resolvedType !== "COLOR") continue;
 
@@ -33,15 +39,17 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
             let colorValue = rgbToString(
               variable.valuesByMode[mode.modeId] as RGB | RGBA
             );
-            let colorMode = toCamelCase(mode.name)
-            colors[colorName] = {...colors[colorName], [colorMode]: colorValue}  
+            let colorMode = toCamelCase(mode.name);
+            colors[colorName] = {
+              ...colors[colorName],
+              [colorMode]: colorValue,
+            };
           }
-
 
           let colorValue = rgbToString(
             variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
           );
-            colors[colorName] = {...colors[colorName], "DEFAULT": colorValue}  
+          colors[colorName] = { ...colors[colorName], DEFAULT: colorValue };
         }
       }
 
@@ -71,9 +79,9 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
 
     return [
       {
-        language: "PLAINTEXT",
-        code: ``,
-        title: "COLOR variables",
+        language: "JAVASCRIPT",
+        code: tailwindConfigStr,
+        title: "tailwind.config.js",
       },
     ];
   });
