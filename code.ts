@@ -1,8 +1,8 @@
 if (figma.editorType === "figma") {
   figma.showUI(__html__);
-  figma.ui.onmessage = (message) => {
+  figma.ui.onmessage = async (message) => {
     if (message === "generate") {
-      figma.ui.postMessage({ colors: "" });
+      figma.ui.postMessage(await getTwConfigStr());
     }
   };
 } else if (figma.editorType === "dev" && figma.mode === "codegen") {
