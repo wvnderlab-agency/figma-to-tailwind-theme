@@ -2,10 +2,6 @@ if (figma.editorType === "figma") {
   figma.showUI(__html__);
 } else if (figma.editorType === "dev" && figma.mode === "codegen") {
   figma.codegen.on("generate", async () => {
-    const selection = figma.currentPage.selection;
-
-    if (!selection) return [];
-
     const collections =
       await figma.variables.getLocalVariableCollectionsAsync();
     const colorsConfig = {
