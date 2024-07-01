@@ -1,5 +1,5 @@
 if (figma.editorType === "figma") {
-  figma.showUI(__html__, { themeColors: true });
+  figma.showUI(__html__, { themeColors: true,  width: 800, height: 600});
 
   figma.ui.onmessage = async (message) => {
     if (message === "generate") {

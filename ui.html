@@ -1,6 +1,31 @@
-  <h1>tailwind.config.js</h1>
-  <textarea id="config"></textarea>
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .config {
+      flex: 1;
+      font-size: 16px;
+      resize: none;
+    }
 
+    .title {
+      font-size: 16px;
+      color: var(--figma-color-text);
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1 class="title">tailwind.config.js</h1>
+    <textarea class="config" id="config"></textarea>
+  </main>
+</body> 
 <script>
   parent.postMessage({ pluginMessage: "generate" }, "*");
 
@@ -10,3 +35,5 @@
     document.getElementById("config").innerHTML = config; 
   };
 </script>
+</body>
+</html>
