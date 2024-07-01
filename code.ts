@@ -1,5 +1,6 @@
 if (figma.editorType === "figma") {
-  figma.showUI(__html__);
+  figma.showUI(__html__, { themeColors: true });
+
   figma.ui.onmessage = async (message) => {
     if (message === "generate") {
       figma.ui.postMessage(await getTwConfigStr());
