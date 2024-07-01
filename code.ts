@@ -1,4 +1,6 @@
-if (figma.editorType === "dev" && figma.mode === "codegen") {
+if (figma.editorType === "figma") {
+  figma.showUI(__html__);
+} else if (figma.editorType === "dev" && figma.mode === "codegen") {
   figma.codegen.on("generate", async () => {
     const selection = figma.currentPage.selection;
 
@@ -14,7 +16,7 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
       },
     };
     const colorsConfigStr = JSON.stringify(colorsConfig, null, 2);
-    const tailwindConfigStr = `export default ${colorsConfigStr}`
+    const tailwindConfigStr = `export default ${colorsConfigStr}`;
 
     interface ColorMode {
       [key: string]: string;
