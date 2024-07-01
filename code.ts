@@ -1,5 +1,10 @@
 if (figma.editorType === "figma") {
   figma.showUI(__html__);
+  figma.ui.onmessage = (message) => {
+    if (message === "generate") {
+      figma.ui.postMessage({ colors: "" });
+    }
+  };
 } else if (figma.editorType === "dev" && figma.mode === "codegen") {
   figma.codegen.on("generate", async () => {
     const collections =

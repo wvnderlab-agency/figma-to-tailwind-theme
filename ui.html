@@ -1,3 +1,16 @@
-<h2>TEST</h2>
+<h1>tailwind.config.js</h1>
+<textarea id="config"></textarea>
+
 <script>
+  parent.postMessage({ pluginMessage: "generate" }, "*");
+
+  onmessage = (event) => {
+    const config = event.data.pluginMessage;
+    console.log("received", config);
+    document.getElementById("config").innerText = JSON.stringify(
+      config,
+      null,
+      2
+    );
+  };
 </script>
