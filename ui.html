@@ -2,6 +2,17 @@
 <html>
 <head>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter";
+      color: var(--figma-color-text);
+      padding: 0;
+      margin: 0;
+    }
+
     .container {
       display: flex;
       flex-direction: column;
@@ -10,20 +21,50 @@
     
     .config {
       flex: 1;
-      font-size: 16px;
       resize: none;
+      padding: 0.8rem;
+      border-color: var(--figma-color-border);
+      background-color: var(--figma-color-bg-secondary);
+      color: var(--figma-color-text);
+      font-family: monospace;
+      font-size: 1rem;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .title {
-      font-size: 16px;
-      color: var(--figma-color-text);
+      padding-inline-start: 0.8rem;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--figma-color-text-secondary);
+    }
+
+    .copy-button {
+      padding: 0.8rem; 
+      background-color: transparent;
+      color: var(--figma-color-text-secondary); 
+      border: 0;
+      cursor: pointer;
+    }
+
+    .copy-button:hover {
+      color: var(--figma-color)
     }
   </style>
 </head>
 <body>
   <main class="container">
-    <h1 class="title">tailwind.config.js</h1>
-    <textarea class="config" id="config"></textarea>
+    <div class="navbar">
+      <h1 class="title">tailwind.config.js</h1>
+      <button class="copy-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-copy"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><path d="M16 4h2a2 2 0 0 1 2 2v4"/><path d="M21 14H11"/><path d="m15 10-4 4 4 4"/></svg>
+      </button>
+    </div>
+    <textarea readonly class="config" id="config"></textarea>
   </main>
 </body> 
 <script>
