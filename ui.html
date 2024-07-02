@@ -68,6 +68,13 @@
   </main>
 </body> 
 <script>
+  document.querySelector(".copy-button").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const configElem = document.querySelector(".config");
+    configElem.select();
+    document.execCommand("copy");
+  })
   parent.postMessage({ pluginMessage: "generate" }, "*");
 
   onmessage = (event) => {
