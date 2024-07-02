@@ -78,6 +78,7 @@
     const configElem = document.querySelector(".config");
     configElem.select();
     document.execCommand("copy");
+    parent.postMessage({ pluginMessage: "notify", message: "Copied to clipboard"}, "*");
   })
   parent.postMessage({ pluginMessage: "generate" }, "*");
 
