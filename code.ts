@@ -4,6 +4,7 @@ if (figma.editorType === "figma") {
   figma.ui.onmessage = async (message) => {
     if (message === "generate") {
       figma.ui.postMessage(await getTwConfigStr());
+      console.log("style colors", await getColorsFromStyles());
     }
 
     if (message === "notify") {
@@ -31,15 +32,23 @@ interface Colors {
 }
 
 async function getTwConfigStr() {
+  const varColors = await getColorsFromVars();
+  const styleColors = await getColorsFromStyles();
+
+  const hasColors =
+    Object.keys(varColors).length + Object.keys(styleColors).length > 0;
+
   const themeConfig = {
     theme: {
       extend: {
-        colors: await getColorsFromVars(),
+        colors: { ...styleColors, ...varColors },
       },
     },
   };
 
-  return `export default ${JSON.stringify(themeConfig, null, 2)}`;
+  return hasColors
+    ? `export default ${JSON.stringify(themeConfig, null, 2)}`
+    : "";
 }
 
 async function getColorsFromVars(): Promise<Colors> {
@@ -70,6 +79,21 @@ async function getColorsFromVars(): Promise<Colors> {
       );
       colors[colorName] = { ...colors[colorName], DEFAULT: colorValue };
     }
+  }
+
+  return colors;
+}
+
+async function getColorsFromStyles() {
+  const colors: Colors = {};
+  const paintStyles = await figma.getLocalPaintStylesAsync();
+
+  for (let style of paintStyles) {
+    if (style.paints.length !== 1 && style.paints[0].type !== "SOLID") continue;
+
+    let colorName = toCamelCase(style.name);
+    let colorValue = rgbToString((style.paints[0] as SolidPaint).color);
+    colors[colorName] = { DEFAULT: colorValue };
   }
 
   return colors;
