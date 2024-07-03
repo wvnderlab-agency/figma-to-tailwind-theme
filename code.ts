@@ -4,7 +4,6 @@ if (figma.editorType === "figma") {
   figma.ui.onmessage = async (message) => {
     if (message === "generate") {
       figma.ui.postMessage(await getTwConfigStr());
-      console.log("style colors", await getColorsFromStyles());
     }
 
     if (message === "notify") {
@@ -23,12 +22,12 @@ if (figma.editorType === "figma") {
   });
 }
 
-interface ColorMode {
+interface ColorModes {
   [key: string]: string;
 }
 
 interface Colors {
-  [key: string]: ColorMode;
+  [key: string]: string | ColorModes;
 }
 
 async function getTwConfigStr() {
@@ -56,28 +55,46 @@ async function getColorsFromVars(): Promise<Colors> {
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
 
   for (const collection of collections) {
-    for (const varId of collection.variableIds) {
-      let variable = await figma.variables.getVariableByIdAsync(varId);
-      let colorName = toCamelCase(variable?.name || "unknown");
-      colors[colorName] = {};
+    const hasSingleMode = collection.modes.length === 1;
 
-      if (!variable || variable.resolvedType !== "COLOR") continue;
+    if (hasSingleMode) {
+      for (const varId of collection.variableIds) {
+        let variable = await figma.variables.getVariableByIdAsync(varId);
+        if (!variable || variable.resolvedType !== "COLOR") continue;
 
-      for (const mode of collection.modes) {
+        let colorName = toCamelCase(variable.name);
         let colorValue = rgbToString(
-          variable.valuesByMode[mode.modeId] as RGB | RGBA
+          variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
         );
-        let colorMode = toCamelCase(mode.name);
+
+        colors[colorName] = colorValue;
+      }
+    } else {
+      for (const varId of collection.variableIds) {
+        let variable = await figma.variables.getVariableByIdAsync(varId);
+        if (!variable || variable.resolvedType !== "COLOR") continue;
+
+        let colorName = toCamelCase(variable?.name || "unknown");
+
+        for (const mode of collection.modes) {
+          let colorValue = rgbToString(
+            variable.valuesByMode[mode.modeId] as RGB | RGBA
+          );
+          let colorMode = toCamelCase(mode.name);
+          colors[colorName] = {
+            ...(colors[colorName] as ColorModes),
+            [colorMode]: colorValue,
+          };
+        }
+
+        let colorValue = rgbToString(
+          variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
+        );
         colors[colorName] = {
-          ...colors[colorName],
-          [colorMode]: colorValue,
+          ...(colors[colorName] as ColorModes),
+          DEFAULT: colorValue,
         };
       }
-
-      let colorValue = rgbToString(
-        variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
-      );
-      colors[colorName] = { ...colors[colorName], DEFAULT: colorValue };
     }
   }
 
@@ -89,11 +106,11 @@ async function getColorsFromStyles() {
   const paintStyles = await figma.getLocalPaintStylesAsync();
 
   for (let style of paintStyles) {
-    if (style.paints.length !== 1 && style.paints[0].type !== "SOLID") continue;
+    if (style.paints.length !== 1 || style.paints[0]?.type !== "SOLID") continue;
 
     let colorName = toCamelCase(style.name);
     let colorValue = rgbToString((style.paints[0] as SolidPaint).color);
-    colors[colorName] = { DEFAULT: colorValue };
+    colors[colorName] = colorValue;
   }
 
   return colors;
