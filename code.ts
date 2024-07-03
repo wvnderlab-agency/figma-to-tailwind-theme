@@ -1,26 +1,32 @@
-if (figma.editorType === "figma") {
-  figma.showUI(__html__, { themeColors: true, width: 800, height: 600 });
+function main() {
+  if (figma.editorType === "figma") {
+    figma.showUI(__html__, { themeColors: true, width: 800, height: 600 });
 
-  figma.ui.onmessage = async (message) => {
-    if (message === "generate") {
-      figma.ui.postMessage(await getTwConfigStr());
-    }
+    figma.ui.onmessage = async (message) => {
+      if (message === "generate") {
+        figma.ui.postMessage(await getTwConfigStr());
+      }
 
-    if (message === "notify") {
-      figma.notify("Copied to clipboard");
-    }
-  };
-} else if (figma.editorType === "dev" && figma.mode === "codegen") {
-  figma.codegen.on("generate", async () => {
-    return [
-      {
-        language: "JAVASCRIPT",
-        code: await getTwConfigStr(),
-        title: "tailwind.config.js",
-      },
-    ];
-  });
+      if (message === "notify") {
+        figma.notify("Copied to clipboard");
+      }
+    };
+  } else if (figma.editorType === "dev" && figma.mode === "codegen") {
+    figma.codegen.on("generate", async () => {
+      const code = await getTwConfigStr();
+
+      return [
+        {
+          language: "JAVASCRIPT",
+          code,
+          title: "tailwind.config.js",
+        },
+      ];
+    });
+  }
 }
+
+main();
 
 interface ColorModes {
   [key: string]: string;
@@ -106,7 +112,8 @@ async function getColorsFromStyles() {
   const paintStyles = await figma.getLocalPaintStylesAsync();
 
   for (let style of paintStyles) {
-    if (style.paints.length !== 1 || style.paints[0]?.type !== "SOLID") continue;
+    if (style.paints.length !== 1 || style.paints[0]?.type !== "SOLID")
+      continue;
 
     let colorName = toCamelCase(style.name);
     let colorValue = rgbToString((style.paints[0] as SolidPaint).color);
