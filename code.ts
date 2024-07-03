@@ -34,7 +34,7 @@ async function getTwConfigStr() {
   const themeConfig = {
     theme: {
       extend: {
-        colors: await getColors(),
+        colors: await getColorsFromVars(),
       },
     },
   };
@@ -42,7 +42,7 @@ async function getTwConfigStr() {
   return `export default ${JSON.stringify(themeConfig, null, 2)}`;
 }
 
-async function getColors(): Promise<Colors> {
+async function getColorsFromVars(): Promise<Colors> {
   let colors: Colors = {};
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
 
