@@ -50,7 +50,7 @@ async function getTwConfigStr() {
     : "";
 }
 
-async function getColorsFromVars(): Promise<Colors> {
+async function getColorsFromVars() {
   let colors: Colors = {};
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
 
