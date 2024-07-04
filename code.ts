@@ -68,7 +68,7 @@ async function getColorsFromVars() {
         let variable = await figma.variables.getVariableByIdAsync(varId);
         if (!variable || variable.resolvedType !== "COLOR") continue;
 
-        let colorName = toCamelCase(variable.name);
+        let colorName = toClassName(variable.name);
         let colorValue = rgbToString(
           variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
         );
@@ -80,13 +80,13 @@ async function getColorsFromVars() {
         let variable = await figma.variables.getVariableByIdAsync(varId);
         if (!variable || variable.resolvedType !== "COLOR") continue;
 
-        let colorName = toCamelCase(variable?.name || "unknown");
+        let colorName = toClassName(variable?.name || "unknown");
 
         for (const mode of collection.modes) {
           let colorValue = rgbToString(
             variable.valuesByMode[mode.modeId] as RGB | RGBA
           );
-          let colorMode = toCamelCase(mode.name);
+          let colorMode = toClassName(mode.name);
           colors[colorName] = {
             ...(colors[colorName] as ColorModes),
             [colorMode]: colorValue,
@@ -115,7 +115,7 @@ async function getColorsFromStyles() {
     if (style.paints.length !== 1 || style.paints[0]?.type !== "SOLID")
       continue;
 
-    let colorName = toCamelCase(style.name);
+    let colorName = toClassName(style.name);
     let colorValue = rgbToString((style.paints[0] as SolidPaint).color);
     colors[colorName] = colorValue;
   }
@@ -142,4 +142,13 @@ function toCamelCase(str: string) {
   return str.toLowerCase().replace(/[\s_-](.)/g, (_, group1) => {
     return group1.toUpperCase();
   });
+}
+
+function toClassName(str: string) {
+  return toCamelCase(removeGroupPrefix(str));
+}
+
+function removeGroupPrefix(str: string) {
+  let nameParts = str.split("/");
+  return nameParts[nameParts.length - 1];
 }
