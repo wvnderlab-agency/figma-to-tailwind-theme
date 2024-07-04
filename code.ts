@@ -52,7 +52,7 @@ async function getTwConfigStr() {
   };
 
   return hasColors
-    ? `export default ${JSON.stringify(themeConfig, null, 2)}`
+    ? `"theme":  ${JSON.stringify(themeConfig.theme, null, 2)}`
     : "";
 }
 
