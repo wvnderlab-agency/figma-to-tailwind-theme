@@ -144,8 +144,12 @@ function toCamelCase(str: string) {
   });
 }
 
+function toKebabCase(str: string) {
+  return str.toLowerCase().replace(/[\s_-]+/g, "-");
+}
+
 function toClassName(str: string) {
-  return toCamelCase(removeGroupPrefix(str));
+  return toKebabCase(removeGroupPrefix(str));
 }
 
 function removeGroupPrefix(str: string) {
