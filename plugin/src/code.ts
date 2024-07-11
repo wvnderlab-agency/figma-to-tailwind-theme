@@ -70,7 +70,7 @@ async function getColorsFromVars() {
 
         let colorName = toClassName(variable.name);
         let colorValue = rgbToString(
-          variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
+          variable.valuesByMode[collection.defaultModeId] as RGB | RGBA,
         );
 
         colors[colorName] = colorValue;
@@ -84,7 +84,7 @@ async function getColorsFromVars() {
 
         for (const mode of collection.modes) {
           let colorValue = rgbToString(
-            variable.valuesByMode[mode.modeId] as RGB | RGBA
+            variable.valuesByMode[mode.modeId] as RGB | RGBA,
           );
           let colorMode = toClassName(mode.name);
           colors[colorName] = {
@@ -94,7 +94,7 @@ async function getColorsFromVars() {
         }
 
         let colorValue = rgbToString(
-          variable.valuesByMode[collection.defaultModeId] as RGB | RGBA
+          variable.valuesByMode[collection.defaultModeId] as RGB | RGBA,
         );
         colors[colorName] = {
           ...(colors[colorName] as ColorModes),
