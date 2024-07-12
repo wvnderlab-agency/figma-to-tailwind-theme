@@ -30,7 +30,7 @@ export async function getTwConfigStr() {
 }
 
 async function getColorsFromVars() {
-  let colors: Colors = {};
+  const colors: Colors = {};
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
 
   for (const collection of collections) {
