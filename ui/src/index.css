@@ -30,25 +30,12 @@ body {
   font-size: 1rem;
 }
 
-.navbar {
-  padding: 0.2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .title {
-  padding-inline-start: 0.8rem;
-  font-size: 1rem;
-  font-weight: 400;
   color: var(--figma-color-text-secondary);
 }
 
 .copy-button {
-  padding: 0.6rem;
-  background-color: transparent;
   color: var(--figma-color-text-secondary);
-  border: 0;
 }
 
 .copy-button:hover {
