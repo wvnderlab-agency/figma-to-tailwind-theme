@@ -13,21 +13,10 @@ body {
   margin: 0;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
 .config {
-  flex: 1;
-  resize: none;
-  padding: 0.8rem;
   border-color: var(--figma-color-border);
   background-color: var(--figma-color-bg-secondary);
   color: var(--figma-color-text);
-  font-family: monospace;
-  font-size: 1rem;
 }
 
 .title {

@@ -29,12 +29,12 @@ function App() {
   }, []);
 
   return (
-    <main className="container">
+    <main className="flex flex-col h-full">
       <Navbar copyRef={copyRef} />
       <textarea
         readOnly
         ref={configRef}
-        className="config"
+        className="config p-3 flex-1 resize-none font-mono"
         id="config"
       ></textarea>
     </main>
