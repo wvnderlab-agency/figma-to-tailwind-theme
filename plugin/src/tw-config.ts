@@ -1,5 +1,14 @@
-import { getColorsFromVars, getColorsFromStyles } from "./colors";
-import { getFontsFromStyles } from "./fonts";
+import { getColorsFromVars, getColorsFromStyles, Colors } from "./colors";
+import { Fonts, getFontsFromStyles } from "./fonts";
+
+interface TwConfig {
+  theme: {
+    extend: {
+      colors?: Colors;
+      fontFamily?: Fonts;
+    };
+  };
+}
 
 export async function getTwConfigStr() {
   const varColors = await getColorsFromVars();
@@ -8,17 +17,23 @@ export async function getTwConfigStr() {
 
   const hasColors =
     Object.keys(varColors).length + Object.keys(styleColors).length > 0;
+  const hasFonts = Object.keys(styleFonts).length > 0;
 
-  const twConfig = {
+  const twConfig: TwConfig = {
     theme: {
-      extend: {
-        colors: { ...styleColors, ...varColors },
-        fontFamily: { ...styleFonts },
-      },
+      extend: {},
     },
   };
 
-  return hasColors
+  if (hasColors) {
+    twConfig.theme.extend.colors = { ...styleColors, ...varColors };
+  }
+
+  if (hasFonts) {
+    twConfig.theme.extend.fontFamily = { ...styleFonts };
+  }
+
+  return hasColors || hasFonts
     ? `"theme":  ${JSON.stringify(twConfig.theme, null, 2)}`
-    : "";
+    : "No colors or fonts on this page";
 }

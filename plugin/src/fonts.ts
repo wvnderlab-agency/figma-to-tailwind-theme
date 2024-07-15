@@ -1,6 +1,6 @@
 import { toKebabCase } from "./utils";
 
-interface Fonts {
+export interface Fonts {
   [key: string]: string | string[];
 }
 
@@ -9,6 +9,7 @@ export async function getFontsFromStyles() {
 
   try {
     const fontStyles = await figma.getLocalTextStylesAsync();
+
     fontStyles.forEach((style) => {
       const fontName = toKebabCase(style.fontName.family);
       fonts[fontName] = style.fontName.family;
