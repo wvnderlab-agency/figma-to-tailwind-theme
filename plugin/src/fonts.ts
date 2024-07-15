@@ -11,9 +11,8 @@ export async function getFontsFromStyles() {
     const fontStyles = await figma.getLocalTextStylesAsync();
     fontStyles.forEach((style) => {
       const fontName = toKebabCase(style.fontName.family);
-      fonts[fontName] = style.fontName.family; 
-    })
-    console.log(fonts);
+      fonts[fontName] = style.fontName.family;
+    });
   } catch (err) {
     console.error("Fetching fonts from figma failed", err);
   }

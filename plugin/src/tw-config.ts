@@ -13,6 +13,7 @@ export async function getTwConfigStr() {
     theme: {
       extend: {
         colors: { ...styleColors, ...varColors },
+        fontFamily: { ...styleFonts },
       },
     },
   };
