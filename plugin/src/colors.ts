@@ -4,7 +4,7 @@ interface ColorModes {
   [key: string]: string;
 }
 
-interface Colors {
+export interface Colors {
   [key: string]: string | ColorModes;
 }
 
