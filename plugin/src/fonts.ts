@@ -1,3 +1,4 @@
+import { PLUGIN_NAME } from "./settings";
 import { toKebabCase } from "./utils";
 
 export interface Fonts {
@@ -15,7 +16,7 @@ export async function getFontsFromStyles() {
       fonts[fontName] = style.fontName.family;
     });
   } catch (err) {
-    console.error("Fetching fonts from figma failed", err);
+    console.error(`Fetching fonts failed from ${PLUGIN_NAME}`, err);
   }
 
   return fonts;
