@@ -33,7 +33,21 @@ export async function getTwConfigStr() {
     twConfig.theme.extend.fontFamily = { ...styleFonts };
   }
 
-  return hasColors || hasFonts
-    ? `"theme":  ${JSON.stringify(twConfig.theme, null, 2)}`
-    : "No colors or fonts on this page";
+  let result = "";
+  try {
+    result =
+      hasColors || hasFonts
+        ? `"theme":  ${JSON.stringify(twConfig.theme, null, 2)}`
+        : "No colors or fonts on this page";
+  } catch (err) {
+    if (err instanceof Error) {
+      result = err.message;
+    }  
+
+    if (typeof err === "string") {
+      result = err;
+    }
+  }
+
+  return result;
 }
