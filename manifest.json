@@ -4,7 +4,7 @@
   "api": "1.0.0",
   "main": "dist/code.js",
   "capabilities": ["codegen", "vscode", "inspect"],
-  "codegenLanguages": [{ "label": "Tailwind", "value": "tailwind" }],
+  "codegenLanguages": [{ "label": "Javascript", "value": "Javascript" }],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
   "editorType": ["figma", "dev"],
