@@ -3,7 +3,7 @@
   "id": "1384511746402383895",
   "api": "1.0.0",
   "main": "dist/code.js",
-  "capabilities": ["codegen", "vscode"],
+  "capabilities": ["codegen", "vscode", "inspect"],
   "codegenLanguages": [{ "label": "Tailwind", "value": "tailwind" }],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
