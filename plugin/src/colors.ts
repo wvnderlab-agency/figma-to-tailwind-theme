@@ -1,5 +1,5 @@
 import { PLUGIN_NAME } from "./settings";
-import { toClassName, rgbToString } from "./utils";
+import { toClassName, rgbToString, resolveValue } from "./utils";
 
 interface ColorModes {
   [key: string]: string;
@@ -25,11 +25,14 @@ export async function getColorsFromVars() {
           if (!variable || variable.resolvedType !== "COLOR") continue;
 
           let colorName = toClassName(variable.name);
-          let colorValue = rgbToString(
-            variable.valuesByMode[collection.defaultModeId] as RGB | RGBA,
-          );
-
-          colors[colorName] = colorValue;
+          try {
+            let colorValue = rgbToString(
+              await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
+            );
+            colors[colorName] = colorValue;
+          } catch (err) {
+            continue;
+          }
         }
       } else {
         for (const varId of collection.variableIds) {
@@ -39,23 +42,33 @@ export async function getColorsFromVars() {
           let colorName = toClassName(variable?.name || "unknown");
 
           for (const mode of collection.modes) {
-            let colorValue = rgbToString(
-              variable.valuesByMode[mode.modeId] as RGB | RGBA,
-            );
-            let colorMode = toClassName(mode.name);
-            colors[colorName] = {
-              ...(colors[colorName] as ColorModes),
-              [colorMode]: colorValue,
-            };
+            try {
+              let colorValue = rgbToString(
+                await resolveValue(variable.valuesByMode[mode.modeId]) as RGB | RGBA,
+              );
+              let colorMode = toClassName(mode.name);
+
+              colors[colorName] = {
+                ...(colors[colorName] as ColorModes),
+                [colorMode]: colorValue,
+              };
+            } catch (err) {
+              continue;
+            }
           }
 
-          let colorValue = rgbToString(
-            variable.valuesByMode[collection.defaultModeId] as RGB | RGBA,
-          );
-          colors[colorName] = {
-            ...(colors[colorName] as ColorModes),
-            DEFAULT: colorValue,
-          };
+          try {
+            let colorValue = rgbToString(
+              await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
+            );
+
+            colors[colorName] = {
+              ...(colors[colorName] as ColorModes),
+              DEFAULT: colorValue,
+            };
+          } catch (err) {
+            continue;
+          }
         }
       }
     }

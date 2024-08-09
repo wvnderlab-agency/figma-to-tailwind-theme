@@ -27,3 +27,19 @@ export function rgbToString(color: RGB | RGBA) {
 
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
+
+export async function resolveValue(value: VariableValue): Promise<VariableValue> {
+  if (!isVariableAlias(value)) return value; 
+
+  const aliasValue = value as VariableAlias;
+  const nextVariable = await figma.variables.getVariableByIdAsync(aliasValue.id)
+  if (nextVariable) {
+    return resolveValue(nextVariable.valuesByMode[0]);
+  } else {
+    throw new Error(`Variable with id ${aliasValue.id} not found`);
+  }
+}
+
+export function isVariableAlias(value: VariableValue) {
+  return (typeof value === "object" && "type" in value && value.type === "VARIABLE_ALIAS");
+}
