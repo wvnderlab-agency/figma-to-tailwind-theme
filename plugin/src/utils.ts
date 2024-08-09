@@ -9,12 +9,8 @@ export function toKebabCase(str: string) {
 }
 
 export function toClassName(str: string) {
-  return toKebabCase(removeGroupPrefix(str));
-}
-
-export function removeGroupPrefix(str: string) {
-  let nameParts = str.split("/");
-  return nameParts[nameParts.length - 1];
+  let parts = str.split("/");
+  return toKebabCase(parts.join(" "));
 }
 
 export function rgbToString(color: RGB | RGBA) {
