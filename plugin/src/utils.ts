@@ -29,12 +29,14 @@ export function rgbToString(color: RGB | RGBA) {
 }
 
 export async function resolveValue(value: VariableValue): Promise<VariableValue> {
-  if (!isVariableAlias(value)) return value; 
+  if (!isVariableAlias(value)) return value;
 
   const aliasValue = value as VariableAlias;
   const nextVariable = await figma.variables.getVariableByIdAsync(aliasValue.id)
   if (nextVariable) {
-    return resolveValue(nextVariable.valuesByMode[0]);
+    const modeId = Object.keys(nextVariable.valuesByMode)[0];
+    return nextVariable.valuesByMode[modeId];
+
   } else {
     throw new Error(`Variable with id ${aliasValue.id} not found`);
   }
