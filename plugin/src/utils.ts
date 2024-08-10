@@ -38,7 +38,7 @@ export async function resolveValue(value: VariableValue): Promise<VariableValue>
     return nextVariable.valuesByMode[modeId];
 
   } else {
-    throw new Error(`Variable with id ${aliasValue.id} not found`);
+    throw new Error(`Figma variable with id ${aliasValue.id} not found`);
   }
 }
 

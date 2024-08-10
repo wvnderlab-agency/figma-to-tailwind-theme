@@ -31,7 +31,7 @@ export async function getColorsFromVars() {
             );
             colors[colorName] = colorValue;
           } catch (err) {
-            continue;
+            console.error(err);
           }
         }
       } else {
@@ -53,7 +53,7 @@ export async function getColorsFromVars() {
                 [colorMode]: colorValue,
               };
             } catch (err) {
-              continue;
+              console.error(err);
             }
           }
 
@@ -67,7 +67,7 @@ export async function getColorsFromVars() {
               DEFAULT: colorValue,
             };
           } catch (err) {
-            continue;
+            console.error(err);
           }
         }
       }
