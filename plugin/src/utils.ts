@@ -9,12 +9,8 @@ export function toKebabCase(str: string) {
 }
 
 export function toClassName(str: string) {
-  return toKebabCase(removeGroupPrefix(str));
-}
-
-export function removeGroupPrefix(str: string) {
-  let nameParts = str.split("/");
-  return nameParts[nameParts.length - 1];
+  let parts = str.split("/");
+  return toKebabCase(parts.join(" "));
 }
 
 export function rgbToString(color: RGB | RGBA) {
@@ -30,4 +26,22 @@ export function rgbToString(color: RGB | RGBA) {
   const alpha = color.hasOwnProperty("a") ? (color as RGBA).a : 1;
 
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+export async function resolveValue(value: VariableValue): Promise<VariableValue> {
+  if (!isVariableAlias(value)) return value;
+
+  const aliasValue = value as VariableAlias;
+  const nextVariable = await figma.variables.getVariableByIdAsync(aliasValue.id)
+  if (nextVariable) {
+    const modeId = Object.keys(nextVariable.valuesByMode)[0];
+    return nextVariable.valuesByMode[modeId];
+
+  } else {
+    throw new Error(`Figma variable with id ${aliasValue.id} not found`);
+  }
+}
+
+export function isVariableAlias(value: VariableValue) {
+  return (typeof value === "object" && "type" in value && value.type === "VARIABLE_ALIAS");
 }
