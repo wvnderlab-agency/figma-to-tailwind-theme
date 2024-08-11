@@ -14,13 +14,19 @@ export function toClassName(str: string) {
 }
 
 export function rgbToString(color: RGB | RGBA) {
+  let alpha = 1;
+
   const red = Math.round(color.r * 255)
     .toString()
   const green = Math.round(color.g * 255)
     .toString()
   const blue = Math.round(color.b * 255)
     .toString()
-  const alpha = color.hasOwnProperty("a") ? (color as RGBA).a : 1;
+
+  if (color.hasOwnProperty("a")) {
+    let colorRGBA = color as RGBA;
+    alpha = (colorRGBA.a === 0 || colorRGBA.a === 1) ? colorRGBA.a : Number(colorRGBA.a.toFixed(2));
+  }
 
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
