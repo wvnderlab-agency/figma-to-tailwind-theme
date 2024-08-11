@@ -1,7 +1,7 @@
 {
-  "name": "figma-plugin-template",
+  "name": "tailwind-theme-gen",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "test": "npm run tsc && npm run build",
