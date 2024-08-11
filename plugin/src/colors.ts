@@ -13,62 +13,18 @@ export async function getColorsFromVars() {
   const colors: Colors = {};
 
   try {
-    const collections =
-      await figma.variables.getLocalVariableCollectionsAsync();
+    const collections = await figma.variables.getLocalVariableCollectionsAsync();
 
     for (const collection of collections) {
-      const hasSingleMode = collection.modes.length === 1;
+      const isSingleMode = collection.modes.length === 1;
+      for (const varId of collection.variableIds) {
+        let variable = await figma.variables.getVariableByIdAsync(varId);
+        if (!variable || variable.resolvedType !== "COLOR") continue;
 
-      if (hasSingleMode) {
-        for (const varId of collection.variableIds) {
-          let variable = await figma.variables.getVariableByIdAsync(varId);
-          if (!variable || variable.resolvedType !== "COLOR") continue;
-
-          let colorName = toClassName(variable.name);
-          try {
-            let colorValue = rgbToString(
-              await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
-            );
-            colors[colorName] = colorValue;
-          } catch (err) {
-            console.error(err);
-          }
-        }
-      } else {
-        for (const varId of collection.variableIds) {
-          let variable = await figma.variables.getVariableByIdAsync(varId);
-          if (!variable || variable.resolvedType !== "COLOR") continue;
-
-          let colorName = toClassName(variable?.name || "unknown");
-
-          for (const mode of collection.modes) {
-            try {
-              let colorValue = rgbToString(
-                await resolveValue(variable.valuesByMode[mode.modeId]) as RGB | RGBA,
-              );
-              let colorMode = toClassName(mode.name);
-
-              colors[colorName] = {
-                ...(colors[colorName] as ColorModes),
-                [colorMode]: colorValue,
-              };
-            } catch (err) {
-              console.error(err);
-            }
-          }
-
-          try {
-            let colorValue = rgbToString(
-              await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
-            );
-
-            colors[colorName] = {
-              ...(colors[colorName] as ColorModes),
-              DEFAULT: colorValue,
-            };
-          } catch (err) {
-            console.error(err);
-          }
+        if (isSingleMode) {
+          await handleSingleModeVar(variable, collection, colors);
+        } else {
+          await handleMultiModeVar(variable, collection, colors);
         }
       }
     }
@@ -77,6 +33,51 @@ export async function getColorsFromVars() {
   }
 
   return colors;
+}
+
+async function handleSingleModeVar(variable: Variable, collection: VariableCollection, colors: Colors) {
+  let colorName = toClassName(variable.name);
+  try {
+    let colorValue = rgbToString(
+      await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
+    );
+    colors[colorName] = colorValue;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function handleMultiModeVar(variable: Variable, collection: VariableCollection, colors: Colors) {
+  let colorName = toClassName(variable?.name || "unknown");
+  for (const mode of collection.modes) {
+    try {
+      let colorValue = rgbToString(
+        await resolveValue(variable.valuesByMode[mode.modeId]) as RGB | RGBA,
+      );
+      let colorMode = toClassName(mode.name);
+
+      colors[colorName] = {
+        ...(colors[colorName] as ColorModes),
+        [colorMode]: colorValue,
+      };
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  try {
+    let colorValue = rgbToString(
+      await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
+    );
+
+    colors[colorName] = {
+      ...(colors[colorName] as ColorModes),
+      DEFAULT: colorValue,
+    };
+  } catch (err) {
+    console.error(err);
+  }
+
 }
 
 export async function getColorsFromStyles() {
