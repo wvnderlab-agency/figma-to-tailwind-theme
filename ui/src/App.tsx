@@ -34,7 +34,7 @@ function App() {
       <textarea
         readOnly
         ref={configRef}
-        className="config p-3 flex-1 resize-none font-mono"
+        className="config p-3 flex-1 resize-none font-mono text-xs"
         id="config"
       ></textarea>
     </main>
