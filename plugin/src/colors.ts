@@ -13,7 +13,8 @@ export async function getColorsFromVars() {
   const colors: Colors = {};
 
   try {
-    const collections = await figma.variables.getLocalVariableCollectionsAsync();
+    const collections =
+      await figma.variables.getLocalVariableCollectionsAsync();
 
     for (const collection of collections) {
       const isSingleMode = collection.modes.length === 1;
@@ -35,11 +36,17 @@ export async function getColorsFromVars() {
   return colors;
 }
 
-async function handleSingleModeVar(variable: Variable, collection: VariableCollection, colors: Colors) {
+async function handleSingleModeVar(
+  variable: Variable,
+  collection: VariableCollection,
+  colors: Colors,
+) {
   let colorName = toClassName(variable.name);
   try {
     let colorValue = rgbToString(
-      await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
+      (await resolveValue(variable.valuesByMode[collection.defaultModeId])) as
+        | RGB
+        | RGBA,
     );
     colors[colorName] = colorValue;
   } catch (err) {
@@ -47,12 +54,16 @@ async function handleSingleModeVar(variable: Variable, collection: VariableColle
   }
 }
 
-async function handleMultiModeVar(variable: Variable, collection: VariableCollection, colors: Colors) {
+async function handleMultiModeVar(
+  variable: Variable,
+  collection: VariableCollection,
+  colors: Colors,
+) {
   let colorName = toClassName(variable?.name || "unknown");
   for (const mode of collection.modes) {
     try {
       let colorValue = rgbToString(
-        await resolveValue(variable.valuesByMode[mode.modeId]) as RGB | RGBA,
+        (await resolveValue(variable.valuesByMode[mode.modeId])) as RGB | RGBA,
       );
       let colorMode = toClassName(mode.name);
 
@@ -67,7 +78,9 @@ async function handleMultiModeVar(variable: Variable, collection: VariableCollec
 
   try {
     let colorValue = rgbToString(
-      await resolveValue(variable.valuesByMode[collection.defaultModeId]) as RGB | RGBA,
+      (await resolveValue(variable.valuesByMode[collection.defaultModeId])) as
+        | RGB
+        | RGBA,
     );
 
     colors[colorName] = {
@@ -77,7 +90,6 @@ async function handleMultiModeVar(variable: Variable, collection: VariableCollec
   } catch (err) {
     console.error(err);
   }
-
 }
 
 export async function getColorsFromStyles() {
